@@ -1,0 +1,96 @@
+<div class="navbar-wrapper" ng-controller="LoginCtrl">
+  <div class="sidebar-header">
+    <div class="sidebar-brand">
+      <a title="Auth Admin" ui-sref="config.users.list">
+        <i class="fa fa-home"></i>
+        Auth Admin
+      </a>
+    </div>
+  </div>
+  <div class="navbar-header-wrapper">
+    <a ng-click="app.settings.asideFolded = !app.settings.asideFolded" class="btn no-shadow navbar-btn"
+       id="menu-toggle">
+      <span
+        ng-class="{ 'fa fa-fw fa-indent' : app.settings.asideFolded, 'fa fa-fw fa-dedent' : !app.settings.asideFolded }"></span>
+    </a>
+
+    <form class="navbar-form navbar-right">
+      <div class="form-group">
+        <div ng-if="!!$storage.user">
+          <button type="submit" ng-click="logout()" class="btn btn-default">Log out</button>
+        </div>
+        <div ng-if="!$storage.user">
+          <input type="email" ng-model="credentials.email" class="form-control" placeholder="Email"
+                 required>
+          <input type="password" ng-model="credentials.password" class="form-control"
+                 placeholder="Password"
+                 required>
+          <button type="submit" ng-click="login(credentials)" class="btn btn-default">Log in</button>
+          <button type="button" ng-click="register(credentials)" class="btn btn-default">Register</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="navbar-text navbar-right">
+      <div ng-if="!!$storage.user">
+        <ul class="list-inline">
+          <li>{{$storage.user.login}}</li>
+          <li ng-repeat="role in $storage.user.groups">
+            <label class="label label-success">{{role}}</label>
+          </li>
+        </ul>
+      </div>
+      <div ng-if="!$storage.user">
+        <span class="label label-default">guest</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="content-wrapper">
+
+  <!-- Sidebar -->
+  <div class="sidebar-wrapper">
+    <ul class="sidebar-nav">
+      <li ng-class="{active: ('config.users' | includedByState)}">
+        <a ui-sref="config.users.list" class="fade-in">
+          <i class="fa fa-user"></i>
+          Users
+        </a>
+      </li>
+      <li ng-class="{active: ('config.groups' | includedByState)}">
+        <a ui-sref="config.groups.list" class="fade-in">
+          <i class="fa fa-group"></i>
+          Groups
+        </a>
+      </li>
+      <li ng-class="{active: ('config.clients' | includedByState)}">
+        <a ui-sref="config.clients.list" class="fade-in" ng-focus="focused = true" ng-blur="focused = false">
+          <i class="fa fa-puzzle-piece"></i>
+          Clients
+        </a>
+      </li>
+      <li ng-class="{active: ('config.tokens' | includedByState)}">
+        <a ui-sref="config.tokens.list" class="fade-in">
+          <i class="fa fa-ticket"></i>
+          Tokens
+        </a>
+      </li>
+    </ul>
+  </div>
+  <!-- /#sidebar-wrapper -->
+
+  <!-- Page Content -->
+  <div class="page-content-wrapper">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="col-md-10">
+            <div ui-view class="view-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /#page-content-wrapper -->
+
+</div>

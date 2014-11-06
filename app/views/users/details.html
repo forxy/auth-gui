@@ -1,0 +1,187 @@
+<div>
+  <h1>User</h1>
+
+  <form name="userForm" class="form-horizontal" role="form">
+    <div class="well well-sm">
+      <button class="btn btn-small btn-save btn-success" ng-disabled="isSaveDisabled()" ng-click="save()">
+        <i class="fa fa-check-circle fa-lg icon-white"></i>
+        Save
+      </button>
+      &nbsp;
+      <button class="btn btn-small btn-default" ng-disabled="isCancelDisabled()" ng-click="discard()">
+        <i class="fa fa-ban fa-lg"></i>
+        Discard changes
+      </button>
+    </div>
+
+    <div class="control-group"
+         ng-class="{ 'has-error' : userForm.email.$invalid && !userForm.email.$pristine }">
+      <label class="control-label" for="email">Email:</label>
+
+      <div class="controls row">
+        <div class="col-md-6">
+          <input id="email" name="email" type="email" class="form-control ng-pristine ng-valid"
+                 ng-disabled="mode != 'new'" ng-model="user.email" required/>
+
+          <p ng-show="userForm.email.$invalid && !userForm.email.$pristine"
+             class="help-block">
+            Please provide a valid email.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="control-group" ng-if="mode == 'new'"
+         ng-class="{ 'has-error' : userForm.password.$invalid && !userForm.password.$pristine }">
+      <label class="control-label" for="password">Password:</label>
+
+      <div class="controls row">
+        <div class="col-md-6">
+          <input id="password" name="password" type="password" class="form-control" ng-model="user.password"/>
+
+          <p ng-show="userForm.password.$invalid && !userForm.password.$pristine" class="help-block">
+            Password is required.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="control-group" ng-if="mode == 'new'"
+         ng-class="{ 'has-error' : !userForm.password2.$pristine && user.password != password2 }">
+      <label class="control-label" for="password2">Retype password:</label>
+
+      <div class="controls row">
+        <div class="col-md-6">
+          <input id="password2" name="password2" type="password" class="form-control" ng-model="password2"/>
+
+          <p ng-show="!userForm.password2.$pristine && user.password != password2" class="help-block">
+            Password do not match.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="control-group"
+         ng-class="{ 'has-error' : userForm.login.$invalid && !userForm.login.$pristine }">
+      <label class="control-label" for="login">Login:</label>
+
+      <div class="controls row">
+        <div class="col-md-6">
+          <input id="login" name="login" type="text"
+                 class="form-control ng-pristine ng-valid"
+                 ng-model="user.login" required/>
+
+          <p ng-show="userForm.login.$invalid && !userForm.login.$pristine"
+             class="help-block">
+            Login is required.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="firstName">First Name:</label>
+
+      <div class="controls row">
+        <div class="col-md-6">
+          <input id="firstName" name="firstName" type="text"
+                 class="form-control ng-pristine ng-valid"
+                 ng-model="user.first_name"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="lastName">Last Name:</label>
+
+      <div class="controls row">
+        <div class="col-md-6">
+          <input id="lastName" name="lastName" type="text"
+                 class="form-control ng-pristine ng-valid"
+                 ng-model="user.last_name"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="control-group" id="gender">
+      <label class="control-label">Gender:</label>
+
+      <div class="controls row">
+        <div class="col-md-6">
+          <label class="radio col-md-2">
+            <input type="radio" name="gender" ng-model="user.gender" value="MALE">Male
+          </label>
+          <label class="radio col-md-2">
+            <input type="radio" name="gender" ng-model="user.gender" value="FEMALE">Female
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="control-group"
+         ng-class="{ 'has-error' : userForm.group.$invalid && userForm.group.$dirty }">
+      <label class="control-label" for="group">Groups:</label>
+
+      <div class="controls row">
+        <div class="col-md-4">
+          <table class="table-hover table-responsive">
+            <thead>
+            <tr>
+              <!--<pre>group: {{group | json}}</pre>
+              <pre>user.groups: {{user.groups | json}}</pre>-->
+              <th class="control-group">
+                <input id="group" name="group" ng-model="group" class="form-control"
+                       placeholder="Custom template" type="text" ng-animate="dropdown-menu"
+                       typeahead="group as group.name for group in group_list | filter:{name:$viewValue}">
+                <!--<input id="group" name="group" class="form-control" data-animation="am-flip-x"
+                       placeholder="group name" type="text" ng-model="group"
+                       ng-options="group as group.name for group in group_list" bs-typeahead>-->
+                <!--<input id="group" name="group" class="form-control"
+                       placeholder="group name" type="text" ng-model="group" data-min-length="0"
+                       data-multiple="1"
+                       ng-options="group as group.name for group in getGroups($viewValue)" bs-typeahead>-->
+                <!--<button id="group" name="group" type="button" class="btn btn-default" ng-model="user.groups"
+                        data-multiple="1" data-animation="am-flip-x"
+                        ng-options="group.code as group.name for group in group_list" bs-select>
+                  Action <span class="caret"></span>
+                </button>-->
+              </th>
+              <th>
+                <a href="" class="btn fa fa-plus-circle fa-lg" style="color: #5cb85c"
+                   ng-disabled="userForm.group.$invalid || !group.code"
+                   ng-click="user.groups.push(group.code); group = null"></a>
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td colspan="2">
+                <p ng-show="userForm.group.$invalid && userForm.group.$dirty"
+                   class="help-block">
+                  Role should not be empty
+                </p>
+              </td>
+            </tr>
+            <tr ng-repeat="group_code in user.groups track by $index">
+              <td><span class="label label-success">{{groups[group_code].name}}</span></td>
+              <td><a href="" class="btn fa fa-minus-circle fa-lg"
+                     ng-click="user.groups.splice($index, 1)"></a></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="well well-sm">
+      <button class="btn btn-small btn-save btn-success" ng-disabled="isSaveDisabled()" ng-click="save()">
+        <i class="fa fa-check-circle fa-lg icon-white"></i>
+        Save
+      </button>
+      &nbsp;
+      <button class="btn btn-small btn-default" ng-disabled="isCancelDisabled()" ng-click="discard()">
+        <i class="fa fa-ban fa-lg"></i>
+        Discard changes
+      </button>
+  </form>
+</div>

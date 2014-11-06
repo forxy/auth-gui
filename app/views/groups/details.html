@@ -1,0 +1,135 @@
+<div>
+  <h1>Group</h1>
+
+  <form name="group_form" class="form-horizontal">
+    <div class="well well-sm">
+      <button class="btn btn-small btn-save btn-success" ng-disabled="isSaveDisabled()" ng-click="save()">
+        <i class="fa fa-check-circle fa-lg icon-white"></i>
+        Save
+      </button>
+      &nbsp;
+      <button class="btn btn-small btn-default" ng-disabled="isCancelDisabled()" ng-click="discard()">
+        <i class="fa fa-ban fa-lg"></i>
+        Discard changes
+      </button>
+    </div>
+
+    <tabset>
+      <tab heading="General">
+        <div class="control-group"
+             ng-class="{ 'has-error' : group_form.code.$invalid && !group_form.code.$pristine }">
+          <label class="control-label" for="code">Group Code:</label>
+
+          <div class="controls">
+            <input id="code" name="code" type="text" class="form-control ng-pristine ng-valid"
+                   ng-model="group.code" ng-disabled="mode!='new'" required/>
+
+            <p ng-show="group_form.code.$invalid && !group_form.code.$pristine" class="help-block">
+              Group Code is required.
+            </p>
+
+            <p class="help-block">
+              Unique identifier.
+            </p>
+          </div>
+        </div>
+
+        <div class="control-group"
+             ng-class="{ 'has-error' : group_form.name.$invalid && !group_form.name.$pristine }">
+          <label class="control-label" for="name">Group Name:</label>
+
+          <div class="controls">
+            <input id="name" name="name" type="text"
+                   class="form-control ng-pristine ng-valid"
+                   ng-model="group.name" required/>
+
+            <p ng-show="group_form.name.$invalid && !group_form.name.$pristine"
+               class="help-block">
+              Group Name is required.
+            </p>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="description">Description:</label>
+
+          <div class="controls">
+            <textarea id="description" name="description" class="form-control ng-pristine ng-valid"
+                      ng-model="group.description"></textarea>
+
+            <p class="help-block">Human-readable text description</p>
+          </div>
+        </div>
+      </tab>
+
+      <tab heading="Access">
+        <div class="control-group"
+             ng-class="{ 'has-error' : group_form.scope.$invalid && group_form.scope.$dirty }">
+          <label class="control-label">Scopes:</label>
+
+          <div class="controls row">
+            <div class="col-md-5">
+              <ul class="list-unstyled">
+                <li>
+                  <div class="alert alert-info" ng-show="hasNoScopes()">
+                    Please add scopes from the registered clients at the right
+                  </div>
+                </li>
+                <li ng-repeat="(client_id, scopes) in group.scopes">
+                  <div class="well well-sm scopes">
+                    <span>{{clients[client_id].name}}</span>
+                    <ul>
+                      <li ng-repeat="scope in scopes">
+                        <div class="row">
+                          <a class="btn btn-sm label label-success"
+                             ng-click="removeScope(client_id,scope)">{{scope}}</a>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="client name"
+                         ng-model="clientSearch.name">
+                  <span class="input-group-addon"><i class="fa fa-search fa-fw"></i></span>
+                </div>
+              </div>
+              <ul class="list-unstyled">
+                <li ng-repeat="client in clients_list | filter:clientSearch:strict">
+                  <div class="well well-sm scopes">
+                    <span title="{{client_id}}">{{client.name}}</span>
+                    <ul>
+                      <li ng-repeat="clientScope in client.scopes | exclude:group.scopes[client.client_id]">
+                        <div class="row">
+                          <a class="btn btn-sm label label-success"
+                             ng-click="addScope(client.client_id,clientScope)">{{clientScope}}</a>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </tab>
+    </tabset>
+
+    <div class="well well-sm control-group">
+      <button class="btn btn-small btn-save btn-success" ng-disabled="isSaveDisabled()" ng-click="save()">
+        <i class="fa fa-check-circle fa-lg icon-white"></i>
+        Save
+      </button>
+      &nbsp;
+      <button class="btn btn-small btn-default" ng-disabled="isCancelDisabled()" ng-click="discard()">
+        <i class="fa fa-ban fa-lg"></i>
+        Discard changes
+      </button>
+    </div>
+  </form>
+</div>

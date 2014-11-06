@@ -1,0 +1,82 @@
+<div class="well well-sm">
+  <a ui-sref="config.clients.details({client_id: 'new', mode: 'new'})" class="btn btn-success text-highlight">
+    <i class="fa fa-plus-circle fa-lg"></i>
+    Add Application
+  </a>
+</div>
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th ng-repeat="header in headers" nowrap>
+      <sort-by onsort="onSort" sortdir="filterCriteria.sort_dir" sortedby="filterCriteria.sorted_by"
+               sortvalue="{{header.value}}">{{header.title}}
+      </sort-by>
+    </th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>
+      <input class="form-control" on-enter-blur placeholder="client ID"
+             on-blur-change="filterResult()" ng-model="filterCriteria.client_id"></td>
+    <td>
+      <input class="form-control" on-enter-blur placeholder="application name"
+             on-blur-change="filterResult()" ng-model="filterCriteria.name">
+    </td>
+    <td>
+      <input class="form-control" on-enter-blur placeholder="updater"
+             on-blur-change="filterResult()" ng-model="filterCriteria.updated_by">
+    </td>
+    <td>
+      <input class="form-control" on-enter-blur placeholder="creator"
+             on-blur-change="filterResult()" ng-model="filterCriteria.created_by">
+    </td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr ng-repeat="client in clients">
+    <td><a ui-sref="config.clients.details({client_id: client.client_id, mode: 'edit'})">
+      {{client.client_id}}
+    </a></td>
+    <td>{{client.name}}</td>
+    <td>{{client.updated_by}}</td>
+    <td>{{client.created_by}}</td>
+    <td>{{client.update_date}}</td>
+    <td>{{client.create_date}}</td>
+    <td>
+      <div class="btn-group" style="width: 100px">
+        <a ui-sref="config.clients.details({client_id: client.client_id, mode: 'view'})"
+           class="btn btn-default btn-sm">
+          <i class="fa fa-eye"></i>
+        </a>
+        <a ui-sref="config.clients.details({client_id: client.client_id, mode: 'edit'})"
+           class="btn btn-default btn-sm">
+          <i class="fa fa-pencil"></i>
+        </a>
+        <button type="button" class="btn btn-danger btn-sm" ng-click="remove(client)">
+          <i class="fa fa-trash-o"></i>
+        </button>
+      </div>
+    </td>
+  </tr>
+  <tr ng-show="!clients || clients.length == 0">
+    <td colspan="8">
+      <div class="alert alert-info">
+        No applications found
+      </div>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<div ng-show="totalPages > 1">
+  <pagination num-pages="totalPages" ng-model="filterCriteria.page" current-page="filterCriteria.page"
+              max-size="10" class="" boundary-links="true" on-select-page="selectPage(page)"></pagination>
+</div>
+<div class="well well-sm">
+  <a ui-sref="config.clients.details({client_id: 'new', mode: 'new'})" class="btn btn-success text-highlight">
+    <i class="fa fa-plus-circle fa-lg"></i>
+    Add Application
+  </a>
+</div>

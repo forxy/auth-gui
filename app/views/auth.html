@@ -1,0 +1,19 @@
+<div ng-controller="AuthCtrl" class="login">
+  <form id="auth-form" class="login-form form-horizontal">
+      <div id="alerts-container" ng-if="alerts.length > 0">
+        <alert ng-repeat="alert in alerts" class="alert-pupup" type="{{alert.type}}">
+          {{alert.msg}}
+        </alert>
+      </div>
+    <div ng-if="!!client && alerts.length == 0">
+      <label>{{client.name}} is requesting the following scopes:</label>
+      <ul ng-repeat="scope in scopes">
+        <li class="label label-success">{{scope}}</li>
+      </ul>
+      <div class="well well-sm">
+        <button class="btn btn-success text-highlight">Agree</button>
+        <button class="btn btn-default text-highlight">Disagree</button>
+      </div>
+    </div>
+  </form>
+</div>

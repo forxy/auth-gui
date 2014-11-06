@@ -1,0 +1,48 @@
+<div class="login">
+
+  <form id="login-form" ng-show="!$storage.user.isLoggedIn" name="loginForm" method="post"
+        ng-submit="login(credentials)" role="form" class="login-form form-horizontal" form-autofill-fix>
+    <div class="row">
+
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+          <input id="email" type="email" name="email" ng-model="credentials.email" class="form-control"
+                 placeholder="Email" required autofocus>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-lock fa-fw"></i></span>
+          <input id="password" type="password" name="password" ng-model="credentials.password"
+                 class="form-control"
+                 placeholder="Password" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <input id="rememberMe" type="checkbox" name="rememberMe" ng-model="rememberMe" class="fa-fw">
+          </span>
+          <input type="text" name="rememberMeLabel" class="form-control" placeholder="Remember me" disabled>
+        </div>
+      </div>
+      <div class="btn-group-lg">
+        <button type="submit" class="btn btn-default btn-block">Log in</button>
+      </div>
+      <div id="alerts-container">
+        <alert ng-repeat="alert in alerts" class="alert-pupup" type="{{alert.type}}" close="alerts.splice($index, 1)">{{alert.msg}}</alert>
+      </div>
+    </div>
+  </form>
+  <form ng-if="$storage.user.isLoggedIn" name="logoutForm" method="post" role="form"
+        ng-submit="logout()" class="form-horizontal">
+    <div class="form-group-lg">
+      <div class="btn-group-lg">
+        <button type="submit" class="btn btn-default btn-block">Log Out</button>
+      </div>
+    </div>
+  </form>
+</div>
