@@ -58,6 +58,9 @@ module.exports = function (grunt) {
         files: ['Gruntfile.js']
       },
       livereload: {
+        port: 8443,
+        key: grunt.file.read('oauth.key'),
+        cert: grunt.file.read('oauth.crt'),
         options: {
           livereload: '<%= connect.options.livereload %>'
         },
@@ -88,12 +91,30 @@ module.exports = function (grunt) {
     // The actual grunt server settings
     connect: {
       options: {
-        port: 8080,
         // Change this to '0.0.0.0' to access the server from outside.
         hostname: 'localhost',
+        protocol: 'https',
+        port: 8443,
+        key: grunt.file.read('oauth.nopass.key').toString(),
+        cert: grunt.file.read('oauth.crt').toString(),
         livereload: 35729
       },
       server: {
+        proxies: [
+          {
+            context:'/api/auth',
+            host: '127.0.0.1',
+            port: 11090,
+            https: true,
+            xforward: false,
+            rewrite: {
+              '^/api': ''
+            },
+            headers: {
+              "Access-Control-Allow-Origin": '*'
+            }
+          }
+        ],
         options: {
 
           middleware: function(connect, options) {
@@ -111,19 +132,41 @@ module.exports = function (grunt) {
       livereload: {
         options: {
           open: true,
-          middleware: function (connect) {
-            return [
-              // CORS support
-              corsMiddleware,
-              modRewrite(['!\\.html|\\.js|\\.svg|\\.css|\\.png|\\.otf|\\.ttc|\\.ttf|\\.woff$ /index.html [L]']),
-              connect.static('.tmp'),
+          base: [
+            '.tmp',
+            appConfig.app
+          ],
+          middleware: function (connect, options) {
 
-              connect().use(
-                '/app/bower_components',
-                connect.static('./app/bower_components')
-              ),
-              connect.static(appConfig.app)
-            ];
+            if (!Array.isArray(options.base)) {
+              options.base = [options.base];
+            }
+
+            // Setup the proxy
+            var middlewares = [require('grunt-connect-proxy/lib/utils').proxyRequest];
+
+            // Serve static files.
+            options.base.forEach(function(base) {
+              middlewares.push(connect.static(base));
+            });
+
+            // Make directory browse-able.
+            var directory = options.directory || options.base[options.base.length - 1];
+            middlewares.push(connect.directory(directory));
+
+            middlewares.push(corsMiddleware);
+            middlewares.push(
+              modRewrite(['!\\.html|\\.js|\\.svg|\\.css|\\.png|\\.otf|\\.ttc|\\.ttf|\\.woff$ /index.html [L]'])
+            );
+            middlewares.push(connect.static('.tmp'));
+            middlewares.push(connect().use(
+              '/app/bower_components',
+              connect.static('./app/bower_components')
+            ));
+
+            middlewares.push(connect.static(appConfig.app));
+
+            return middlewares;
           }
         }
       },
@@ -131,7 +174,9 @@ module.exports = function (grunt) {
         options: {
           port: 9001,
           middleware: function (connect) {
+            var proxy = require('grunt-connect-proxy/lib/utils').proxyRequest;
             return [
+              proxy,
               connect.static('.tmp'),
               connect.static('test'),
               connect().use(
@@ -442,10 +487,11 @@ module.exports = function (grunt) {
 
     nginx: {
       options: {
-        //config: 'd:\\Work\\Git\\LearningREST\\REST\\AuthGUI\\nginx.conf'
-        config: '/Users/Tiger/Work/Git/Pets/REST/AuthGUI/nginx.conf',
+        //config: 'd:\\Work\\Git\\forxy\\auth-gui\\nginx.conf'
+        config: '/Users/Tiger/Work/Git/forxy/auth-gui/nginx.conf',
+        //config: 'nginx.conf',
         useSudo: true
-        //prefix: './relative/path/nginx',
+        //prefix: './'
         //globals: ['pid /usr/local/var/run/nginx.pid', 'worker_processes 4']
       }
     }
@@ -461,6 +507,7 @@ module.exports = function (grunt) {
       'clean:server',
       'wiredep',
       'concurrent:server',
+      'configureProxies:server',
       'autoprefixer',
       'connect:livereload',
       'watch'
@@ -513,6 +560,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('default', [
+    'nginx:start',
     'newer:jshint',
     'test',
     'less',
@@ -520,6 +568,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.loadNpmTasks('grunt-replace');
+  grunt.loadNpmTasks('grunt-connect-proxy');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-nginx');

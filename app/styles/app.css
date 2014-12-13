@@ -10032,6 +10032,9 @@ fieldset[disabled] .datepicker table tr td span.active.disabled:hover.active {
 p {
   margin: 20px 0;
 }
+a:link {
+  outline: none;
+}
 body .app-aside-folded .navbar-wrapper .sidebar-header {
   width: 0;
 }

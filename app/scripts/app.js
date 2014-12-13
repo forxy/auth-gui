@@ -37,14 +37,15 @@ angular.module('authServiceAdmin', [
       });
 
       OAuthProvider.extendConfig({
-        authenticationEndpoint: 'http://localhost:11080/AuthService/app/login/',
-        authorizationEndpoint: 'http://localhost:11080/AuthService/service/oauth/authorize/',
+        authenticationEndpoint: 'http://localhost:11080/auth/login/',
+        authorizationEndpoint: 'http://localhost:11080/auth/authorize/',
         client_id: '53cab7ca3004c4a709c985c3',
         client_secret: 'secret',
         scope: 'readClients writeClients readTokens updateTokens'
       });
 
-      RestangularProvider.setBaseUrl(config.authEndpoint);
+      RestangularProvider.setBaseUrl('/api/auth');
+      //RestangularProvider.setBaseUrl(config.authEndpoint);
 
       var access = routingConfig.accessLevels;
 
@@ -169,7 +170,7 @@ angular.module('authServiceAdmin', [
           }
         });
 
-      // FIX for trailing slashes. Gracefully "borrowed" from https://github.com/angular-ui/ui-router/issues/50
+      // FIX for trailing slashes. Gracefully 'borrowed' from https://github.com/angular-ui/ui-router/issues/50
       $urlRouterProvider.rule(function ($injector, $location) {
         if ($location.protocol() === 'file') {
           return;
@@ -220,48 +221,48 @@ angular.module('authServiceAdmin', [
         };
       }]);
     }])
-  /*.run(['$rootScope', '$state', 'Auth', '$location', 'AlertMgr',
-   function ($rootScope, $state, Auth, $location, AlertMgr) {
-   $rootScope.$on("$stateChangeStart", function (event, toState, toParams, fromState, fromParams) {
-   if (!Auth.authorize(toState.data.access)) {
-   AlertMgr.addAlert('danger', "Seems like you tried accessing a route you don`t have access to...");
+  .run(['$rootScope', '$state', 'Auth', '$location', 'AlertMgr',
+    function ($rootScope, $state, Auth, $location, AlertMgr) {
+      $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+        if (!Auth.authorize(toState.data.access)) {
+          AlertMgr.addAlert('danger', 'Seems like you tried accessing a route you don`t have access to...');
 
-   event.preventDefault();
+          event.preventDefault();
 
-   if (fromState.url === '^') {
-   if (Auth.isLoggedIn()) {
-   $rootScope.alerts = [];
-   $state.go('clients.list');
-   } else {
-   $state.transitionTo('login', {redirect_url: $location.url()});
-   }
-   }
-   } else {
-   AlertMgr.clearAlerts();
-   }
-   });
-   }])*/
+          if (fromState.url === '^') {
+            if (Auth.isLoggedIn()) {
+              $rootScope.alerts = [];
+              $state.go('clients.list');
+            } else {
+              $state.transitionTo('login', {redirect_url: $location.url()});
+            }
+          }
+        } else {
+          AlertMgr.clearAlerts();
+        }
+      });
+    }])
   /*.run(['$rootScope', '$window', 'OAuth',
-   function ($rootScope, $window, OAuth) {
-   //$rootScope.session = sessionService;
-   $window.app = {
-   authState: function (state, user) {
-   $rootScope.$apply(function () {
-   switch (state) {
-   case 'success':
-   OAuth.verifyAsync(user);
-   break;
-   case 'failure':
-   $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
-   break;
-   }
+    function ($rootScope, $window, OAuth) {
+      //$rootScope.session = sessionService;
+      $window.app = {
+        authState: function (state, user) {
+          $rootScope.$apply(function () {
+            switch (state) {
+              case 'success':
+                OAuth.verifyAsync(user);
+                break;
+              case 'failure':
+                $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+                break;
+            }
 
-   });
-   }
-   };
+          });
+        }
+      };
 
-   if ($window.user !== null) {
-   alert('Authentication succeeded');
-   //sessionService.authSuccess($window.user);
-   }
-   }])*/;
+      if ($window.user !== null) {
+        alert('Authentication succeeded');
+        //sessionService.authSuccess($window.user);
+      }
+    }])*/;

@@ -30,7 +30,7 @@ angular.module('services.auth', ['restangular'])
           return isAuthorized;
         },
         login: function (credentials, rememberMe, success, error) {
-          return Restangular.oneUrl('auth/login').customPOST(
+          return Restangular.oneUrl('login').customPOST(
             $.param(credentials),
             undefined,
             undefined,
@@ -39,7 +39,7 @@ angular.module('services.auth', ['restangular'])
 
               $http.defaults.headers.common.Authorization = 'Bearer ' + token;
               var jwtBody = JSON.parse(window.atob(token.split('.')[1]));
-              Restangular.one('auth/profile', jwtBody.sub).get().then(function (user) {
+              Restangular.one('profile', jwtBody.sub).get().then(function (user) {
                 user.isLoggedIn = true;
                 $sessionStorage.user = user;
                 $sessionStorage.token = token;
@@ -56,7 +56,7 @@ angular.module('services.auth', ['restangular'])
             });
         },
         profile: function (email) {
-          return Restangular.one('auth/profile', email).get();
+          return Restangular.one('profile', email).get();
         },
         logout: function () {
           $http.defaults.headers.common.Authorization = null;
@@ -205,7 +205,7 @@ angular.module('services.auth', ['restangular'])
       var service = {};
 
       service.request = function (config) {
-        var token = $sessionStorage.token;
+        var token = $sessionStorage.token ? JSON.parse(atob($sessionStorage.token.split('.')[1])) : null;
         var user = $sessionStorage.user;
         if (user === undefined) {
           //window.location.replace('http://localhost:10080/UserService/app/login/?redirect_url=' + $location.absUrl());
@@ -228,7 +228,7 @@ angular.module('services.auth', ['restangular'])
       };
 
       var expired = function (token) {
-        return (token && token.expires_at && new Date(token.expires_at) < new Date());
+        return (token && token.exp && new Date(token.exp * 1000) < new Date());
       };
 
       return service;
