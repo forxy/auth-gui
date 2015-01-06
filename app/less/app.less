@@ -47,7 +47,7 @@ body {
   }
 
   .navbar-wrapper {
-    z-index: 3000;
+    z-index: 300;
     padding-left: 0;
     transition: all 0.5s ease;
     position: fixed;
@@ -84,7 +84,7 @@ body {
       padding-right: 200px;
       margin-left: @sidebar-width;
       position: fixed;
-      z-index: 10000;
+      z-index: 1000;
     }
   }
 
@@ -116,7 +116,7 @@ body {
       transition: all 0.5s ease;
 
       .sidebar-nav {
-        z-index: 2000;
+        z-index: 200;
         position: absolute;
         top: 0;
         width: @sidebar-width;
@@ -162,7 +162,7 @@ body {
   top: 80px;
   transition: all 0.5s ease;
   width: 440px;
-  z-index: 1050;
+  z-index: 150;
   .filter-btn {
     background: none repeat scroll 0 0 #f6f8f8 !important;
     border-color: #dee5e7;
@@ -342,4 +342,11 @@ legend + .control-group {
 
 .form-horizontal .form-actions {
   padding-left: 180px;
+}
+
+.popover-content > {
+  padding: 0;
+  .alert {
+    margin: 0;
+  }
 }

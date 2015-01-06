@@ -52,10 +52,14 @@ angular.module('controllers.user', [])
           $scope.users = response.content;
           $scope.totalPages = Math.ceil(response.total / response.size);
           $scope.usersCount = response.total;
-        }, function () {
+        }, function (resp) {
           $scope.users = [];
           $scope.totalPages = 0;
           $scope.usersCount = 0;
+          throw {
+            message: !!resp.data.error ? resp.data.error + ' : ' + resp.data.messages[0] : 'Error: ' + resp.status,
+            namespace: 'users'
+          };
         });
       };
 
@@ -193,7 +197,7 @@ angular.module('controllers.user', [])
         $scope.original = angular.copy($scope.user);
         if ($scope.mode === 'new') {
           User.add($scope.user).then(function (response) {
-            $state.go('users.details', {login: $scope.user.email, mode: 'edit'});
+            $state.go('users.details', {email: $scope.user.email, mode: 'edit'});
           }, function (error) {
             error.data.messages.forEach(function (item) {
               AlertMgr.addAlert('danger', item);

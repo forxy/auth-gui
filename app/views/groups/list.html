@@ -1,82 +1,84 @@
-<div class="well well-sm">
-  <a ui-sref="config.groups.details({code: 'new', mode: 'new'})" class="btn btn-success text-highlight">
-    <i class="fa fa-plus-circle fa-lg"></i>
-    Add Group
-  </a>
-</div>
-<table class="table table-striped">
-  <thead>
-  <tr>
-    <th ng-repeat="header in headers" nowrap>
-      <sort-by onsort="onSort" sortdir="filterCriteria.sort_dir" sortedby="filterCriteria.sorted_by"
-               sortvalue="{{header.value}}">{{header.title}}
-      </sort-by>
-    </th>
-    <th></th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-    <td>
-      <input class="form-control" on-enter-blur placeholder="code"
-             on-blur-change="filterResult()" ng-model="filterCriteria.code"></td>
-    <td>
-      <input class="form-control" on-enter-blur placeholder="group name"
-             on-blur-change="filterResult()" ng-model="filterCriteria.name">
-    </td>
-    <td>
-      <input class="form-control" on-enter-blur placeholder="updater"
-             on-blur-change="filterResult()" ng-model="filterCriteria.updated_by">
-    </td>
-    <td>
-      <input class="form-control" on-enter-blur placeholder="creator"
-             on-blur-change="filterResult()" ng-model="filterCriteria.created_by">
-    </td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr ng-repeat="group in groups">
-    <td><a ui-sref="config.groups.details({code: group.code, mode: 'edit'})">
-      {{group.code}}
-    </a></td>
-    <td>{{group.name}}</td>
-    <td>{{group.updated_by}}</td>
-    <td>{{group.created_by}}</td>
-    <td>{{group.update_date}}</td>
-    <td>{{group.create_date}}</td>
-    <td>
-      <div class="btn-group" style="width: 100px">
-        <a ui-sref="config.groups.details({code: group.code, mode: 'view'})"
-           class="btn btn-default btn-sm">
-          <i class="fa fa-eye"></i>
-        </a>
-        <a ui-sref="config.groups.details({code: group.code, mode: 'edit'})"
-           class="btn btn-default btn-sm">
-          <i class="fa fa-pencil"></i>
-        </a>
-        <button type="button" class="btn btn-danger btn-sm" ng-click="remove(group)">
-          <i class="fa fa-trash-o"></i>
-        </button>
-      </div>
-    </td>
-  </tr>
-  <tr ng-show="!groups || groups.length == 0">
-    <td colspan="8">
-      <div class="alert alert-info">
-        No groups found
-      </div>
-    </td>
-  </tr>
-  </tbody>
-</table>
-<div ng-show="totalPages > 1">
-  <pagination num-pages="totalPages" ng-model="filterCriteria.page" current-page="filterCriteria.page"
-              max-size="10" class="" boundary-links="true" on-select-page="selectPage(page)"></pagination>
-</div>
-<div class="well well-sm">
-  <a ui-sref="config.groups.details({code: 'new', mode: 'new'})" class="btn btn-success text-highlight">
-    <i class="fa fa-plus-circle fa-lg"></i>
-    Add Group
-  </a>
-</div>
+<error-handling namespace="groups">
+  <div class="well well-sm">
+    <a ui-sref="config.groups.details({code: 'new', mode: 'new'})" class="btn btn-success text-highlight">
+      <i class="fa fa-plus-circle fa-lg"></i>
+      Add Group
+    </a>
+  </div>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th ng-repeat="header in headers" nowrap>
+        <sort-by onsort="onSort" sortdir="filterCriteria.sort_dir" sortedby="filterCriteria.sorted_by"
+                 sortvalue="{{header.value}}">{{header.title}}
+        </sort-by>
+      </th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>
+        <input class="form-control" on-enter-blur placeholder="code"
+               on-blur-change="filterResult()" ng-model="filterCriteria.code"></td>
+      <td>
+        <input class="form-control" on-enter-blur placeholder="group name"
+               on-blur-change="filterResult()" ng-model="filterCriteria.name">
+      </td>
+      <td>
+        <input class="form-control" on-enter-blur placeholder="updater"
+               on-blur-change="filterResult()" ng-model="filterCriteria.updated_by">
+      </td>
+      <td>
+        <input class="form-control" on-enter-blur placeholder="creator"
+               on-blur-change="filterResult()" ng-model="filterCriteria.created_by">
+      </td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr ng-repeat="group in groups">
+      <td><a ui-sref="config.groups.details({code: group.code, mode: 'edit'})">
+        {{group.code}}
+      </a></td>
+      <td>{{group.name}}</td>
+      <td>{{group.updated_by}}</td>
+      <td>{{group.created_by}}</td>
+      <td>{{group.update_date}}</td>
+      <td>{{group.create_date}}</td>
+      <td>
+        <div class="btn-group" style="width: 100px">
+          <a ui-sref="config.groups.details({code: group.code, mode: 'view'})"
+             class="btn btn-default btn-sm">
+            <i class="fa fa-eye"></i>
+          </a>
+          <a ui-sref="config.groups.details({code: group.code, mode: 'edit'})"
+             class="btn btn-default btn-sm">
+            <i class="fa fa-pencil"></i>
+          </a>
+          <button type="button" class="btn btn-danger btn-sm" ng-click="remove(group)">
+            <i class="fa fa-trash-o"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+    <tr ng-show="!groups || groups.length == 0">
+      <td colspan="8">
+        <div class="alert alert-info">
+          No groups found
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <div ng-show="totalPages > 1">
+    <pagination num-pages="totalPages" ng-model="filterCriteria.page" current-page="filterCriteria.page"
+                max-size="10" class="" boundary-links="true" on-select-page="selectPage(page)"></pagination>
+  </div>
+  <div class="well well-sm">
+    <a ui-sref="config.groups.details({code: 'new', mode: 'new'})" class="btn btn-success text-highlight">
+      <i class="fa fa-plus-circle fa-lg"></i>
+      Add Group
+    </a>
+  </div>
+</error-handling>

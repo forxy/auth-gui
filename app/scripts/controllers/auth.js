@@ -32,34 +32,64 @@ angular.module('controllers.auth', ['ngAnimate'])
       });
     }])
 
-  .controller('LoginCtrl', ['$scope', '$state', 'AlertMgr', '$location', 'Auth', '$stateParams', '$sessionStorage', '$animate',
-    function ($scope, $state, AlertMgr, $location, Auth, $stateParams, $sessionStorage, $animate) {
-      $scope.continue = $location.search().continue;
+  .controller('LoginCtrl', ['$scope', '$state', 'AlertMgr', '$location', 'Auth', '$stateParams', '$sessionStorage', '$animate', '$modal',
+    function ($scope, $state, AlertMgr, $location, Auth, $stateParams, $sessionStorage, $animate, $modal) {
       $scope.$storage = $sessionStorage;
       $scope.credentials = {};
       $scope.rememberMe = false;
-      $scope.alerts = [];
-      var loginForm = $('#login-form');
+      $scope.loginDialog = null;
 
       $scope.login = function () {
         Auth.login($scope.credentials, $scope.rememberMe, function () {
           var redirect_uri = $stateParams.continue ? $stateParams.continue : '/';
           $location.url(redirect_uri);
-        }, function (error) {
-          $scope.alerts = [];
-          error.data.messages.forEach(function (item) {
-            $scope.alerts.push({
-              msg: item,
-              type: 'danger'
-            });
-          });
+        }, function (resp) {
+          var loginForm = $('#login-form');
           $animate.addClass(loginForm, 'shake', function () {
             $animate.removeClass(loginForm, 'shake');
           });
+          throw {
+            message: !!resp.data.error ? resp.data.error + ' : ' + resp.data.messages[0] : 'Error: ' + resp.status,
+            namespace: 'login'
+          };
         });
       };
       $scope.logout = function () {
         Auth.logout();
-        $state.transitionTo('login', {continue: $location.url()});
+        $state.transitionTo('config.clients.list', $stateParams, {reload: true});
+        //$state.transitionTo('login', {continue: $location.url()});
+        $scope.openLoginDialog();
+      };
+
+      $scope.openLoginDialog = function () {
+        $scope.loginDialog = $modal.open({
+          templateUrl: '/views/login.html',
+          controller: 'LoginModalCtrl',
+          size: 'sm'
+        });
+      }
+    }])
+
+  .controller('LoginModalCtrl', ['$scope', '$state', 'AlertMgr', '$location', 'Auth', '$stateParams', '$sessionStorage', '$animate', '$modalInstance',
+    function ($scope, $state, AlertMgr, $location, Auth, $stateParams, $sessionStorage, $animate, $modalInstance) {
+      $scope.$storage = $sessionStorage;
+      $scope.credentials = {};
+      $scope.rememberMe = false;
+      $scope.alerts = [];
+
+      $scope.login = function () {
+        Auth.login($scope.credentials, $scope.rememberMe, function () {
+          $modalInstance.close();
+          $state.reload()
+        }, function (resp) {
+          var loginForm = $('#login-form');
+          $animate.addClass(loginForm, 'shake', function () {
+            $animate.removeClass(loginForm, 'shake');
+          });
+          throw {
+            message: !!resp.data.error ? resp.data.error + ' : ' + resp.data.messages[0] : 'Error: ' + resp.status,
+            namespace: 'login'
+          };
+        });
       };
     }]);

@@ -1,91 +1,93 @@
-<div class="well well-sm">
-  <a ui-sref="config.users.details({login: 'new', mode: 'new'})" class="btn btn-success text-highlight">
-    <i class="fa fa-plus-circle fa-lg"></i>
-    Add User
-  </a>
-</div>
-<table class="table table-striped">
-  <thead>
-  <tr>
-    <th ng-repeat="header in headers">
-      <sort-by onsort="onSort" sortdir="filterCriteria.sort_dir" sortedby="filterCriteria.sorted_by"
-               sortvalue="{{header.value}}">{{header.title}}
-      </sort-by>
-    </th>
-    <th></th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-    <td>
-      <input class="form-control" style="width: 100px" on-enter-blur placeholder="email"
-             on-blur-change="filterResult()" ng-model="filterCriteria.email">
-    </td>
-    <td>
-      <input class="form-control" style="width: 80px" on-enter-blur placeholder="login"
-             on-blur-change="filterResult()" ng-model="filterCriteria.login">
-    </td>
-    <td>
-      <input class="form-control" style="width: 100px" on-enter-blur placeholder="first name"
-             on-blur-change="filterResult()" ng-model="filterCriteria.first_name">
-    </td>
-    <td>
-      <input class="form-control" style="width: 100px" on-enter-blur placeholder="last name"
-             on-blur-change="filterResult()" ng-model="filterCriteria.last_name">
-    </td>
-    <td>
-      <select ng-change="filterResult()" class="form-control" style="width: 90px"
-              ng-model="filterCriteria.gender">
-        <option selected value="">any</option>
-        <option value="MALE">male</option>
-        <option value="FEMALE">female</option>
-      </select>
-    </td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr ng-repeat="user in users">
-    <td><a ui-sref="config.users.details({login: user.email, mode : 'edit'})">
-      {{user.email}}
-    </a></td>
-    <td>{{user.login}}</td>
-    <td>{{user.first_name}}</td>
-    <td>{{user.last_name}}</td>
-    <td>{{user.gender}}</td>
-    <td>{{user.update_date}}</td>
-    <td>{{user.create_date}}</td>
-    <td>
-      <div class="btn-group" style="width: 100px">
-        <a ui-sref="config.users.details({login: user.email, mode : 'view'})"
-           class="btn btn-default btn-sm">
-          <i class="fa fa-eye"></i>
-        </a>
-        <a ui-sref="config.users.details({login: user.email, mode : 'edit'})"
-           class="btn btn-default btn-sm">
-          <i class="fa fa-pencil"></i>
-        </a>
-        <button type="button" class="btn btn-danger btn-sm" ng-click="remove(user)">
-          <i class="fa fa-trash-o"></i>
-        </button>
-      </div>
-    </td>
-  </tr>
-  <tr ng-show="!users || users.length == 0">
-    <td colspan="7">
-      <div class="alert alert-info">
-        No users found
-      </div>
-    </td>
-  </tr>
-  </tbody>
-</table>
-<div ng-show="totalPages > 1">
-  <pagination num-pages="totalPages" ng-model="filterCriteria.page" current-page="filterCriteria.page"
-              max-size="10" class="" boundary-links="true" on-select-page="selectPage(page)"></pagination>
-</div>
-<div class="well well-sm">
-  <a ui-sref="config.users.details({login: 'new', mode: 'new'})" class="btn btn-success text-highlight">
-    <i class="fa fa-plus-circle fa-lg"></i>
-    Add User
-  </a>
-</div>
+<error-handling namespace="users">
+  <div class="well well-sm">
+    <a ui-sref="config.users.details({login: 'new', mode: 'new'})" class="btn btn-success text-highlight">
+      <i class="fa fa-plus-circle fa-lg"></i>
+      Add User
+    </a>
+  </div>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th ng-repeat="header in headers">
+        <sort-by onsort="onSort" sortdir="filterCriteria.sort_dir" sortedby="filterCriteria.sorted_by"
+                 sortvalue="{{header.value}}">{{header.title}}
+        </sort-by>
+      </th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>
+        <input class="form-control" style="width: 100px" on-enter-blur placeholder="email"
+               on-blur-change="filterResult()" ng-model="filterCriteria.email">
+      </td>
+      <td>
+        <input class="form-control" style="width: 80px" on-enter-blur placeholder="login"
+               on-blur-change="filterResult()" ng-model="filterCriteria.login">
+      </td>
+      <td>
+        <input class="form-control" style="width: 100px" on-enter-blur placeholder="first name"
+               on-blur-change="filterResult()" ng-model="filterCriteria.first_name">
+      </td>
+      <td>
+        <input class="form-control" style="width: 100px" on-enter-blur placeholder="last name"
+               on-blur-change="filterResult()" ng-model="filterCriteria.last_name">
+      </td>
+      <td>
+        <select ng-change="filterResult()" class="form-control" style="width: 90px"
+                ng-model="filterCriteria.gender">
+          <option selected value="">any</option>
+          <option value="MALE">male</option>
+          <option value="FEMALE">female</option>
+        </select>
+      </td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr ng-repeat="user in users">
+      <td><a ui-sref="config.users.details({login: user.email, mode : 'edit'})">
+        {{user.email}}
+      </a></td>
+      <td>{{user.login}}</td>
+      <td>{{user.first_name}}</td>
+      <td>{{user.last_name}}</td>
+      <td>{{user.gender}}</td>
+      <td>{{user.update_date}}</td>
+      <td>{{user.create_date}}</td>
+      <td>
+        <div class="btn-group" style="width: 100px">
+          <a ui-sref="config.users.details({login: user.email, mode : 'view'})"
+             class="btn btn-default btn-sm">
+            <i class="fa fa-eye"></i>
+          </a>
+          <a ui-sref="config.users.details({login: user.email, mode : 'edit'})"
+             class="btn btn-default btn-sm">
+            <i class="fa fa-pencil"></i>
+          </a>
+          <button type="button" class="btn btn-danger btn-sm" ng-click="remove(user)">
+            <i class="fa fa-trash-o"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+    <tr ng-show="!users || users.length == 0">
+      <td colspan="7">
+        <div class="alert alert-info">
+          No users found
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <div ng-show="totalPages > 1">
+    <pagination num-pages="totalPages" ng-model="filterCriteria.page" current-page="filterCriteria.page"
+                max-size="10" class="" boundary-links="true" on-select-page="selectPage(page)"></pagination>
+  </div>
+  <div class="well well-sm">
+    <a ui-sref="config.users.details({login: 'new', mode: 'new'})" class="btn btn-success text-highlight">
+      <i class="fa fa-plus-circle fa-lg"></i>
+      Add User
+    </a>
+  </div>
+</error-handling>

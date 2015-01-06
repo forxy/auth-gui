@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('services.common', ['restangular'])
+
   .factory('AlertMgr', function () {
     return {
       alerts: {},

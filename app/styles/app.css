@@ -10025,6 +10025,9 @@ fieldset[disabled] .datepicker table tr td span.active.disabled:hover.active {
   box-shadow: 0 1px 10px #a7a7a7, inset 0 1px 0 #fff;
   background: #fcfcfc;
 }
+.modal-content .login-form {
+  margin: auto;
+}
 .login {
   perspective: 600px;
   transform-style: preserve-3d;
@@ -10049,7 +10052,7 @@ body .app-aside-folded .content-wrapper .page-content-wrapper {
   margin-left: 0;
 }
 body .navbar-wrapper {
-  z-index: 3000;
+  z-index: 300;
   padding-left: 0;
   transition: all 0.5s ease;
   position: fixed;
@@ -10084,7 +10087,7 @@ body .navbar-wrapper .navbar-header-wrapper {
   padding-right: 200px;
   margin-left: 200px;
   position: fixed;
-  z-index: 10000;
+  z-index: 1000;
 }
 body .content-wrapper {
   transition: all 0.5s ease;
@@ -10108,7 +10111,7 @@ body .content-wrapper .sidebar-wrapper {
   transition: all 0.5s ease;
 }
 body .content-wrapper .sidebar-wrapper .sidebar-nav {
-  z-index: 2000;
+  z-index: 200;
   position: absolute;
   top: 0;
   width: 200px;
@@ -10148,7 +10151,7 @@ body .content-wrapper .page-content-wrapper {
   top: 80px;
   transition: all 0.5s ease;
   width: 440px;
-  z-index: 1050;
+  z-index: 150;
 }
 .filter-aside .filter-btn {
   background: none repeat scroll 0 0 #f6f8f8 !important;
@@ -10303,4 +10306,10 @@ legend + .control-group {
 }
 .form-horizontal .form-actions {
   padding-left: 180px;
+}
+.popover-content {
+  padding: 0;
+}
+.popover-content .alert {
+  margin: 0;
 }

@@ -45,10 +45,14 @@ angular.module('controllers.group', [])
           $scope.groups = response.content;
           $scope.totalPages = Math.ceil(response.total / response.size);
           $scope.groupsCount = response.total;
-        }, function () {
+        }, function (resp) {
           $scope.groups = [];
           $scope.totalPages = 0;
           $scope.groupsCount = 0;
+          throw {
+            message: !!resp.data.error ? resp.data.error + ' : ' + resp.data.messages[0] : 'Error: ' + resp.status,
+            namespace: 'groups'
+          };
         });
       };
 

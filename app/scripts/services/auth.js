@@ -1,11 +1,12 @@
 'use strict';
 
 angular.module('services.auth', ['restangular'])
+
   .factory('Auth', ['Restangular', '$sessionStorage', '$localStorage', '$http',
     function (Restangular, $sessionStorage, $localStorage, $http) {
 
       var guest = {
-        firstName: 'Guest',
+        login: 'Guest',
         groups: ['public'],
         isLoggedIn: false
       };
@@ -19,9 +20,13 @@ angular.module('services.auth', ['restangular'])
       return {
         authorize: function (accessLevel, role) {
           var isAuthorized = false;
-          if (role === undefined && !!$sessionStorage.user && !!$sessionStorage.user.groups) {
-            for (var groupIdx in $sessionStorage.user.groups) {
-              isAuthorized |= this.authorize(accessLevel, $sessionStorage.user.groups[groupIdx]);
+          if (role === undefined && !!$sessionStorage.user) {
+            if (!!$sessionStorage.user.groups) {
+              for (var groupIdx in $sessionStorage.user.groups) {
+                isAuthorized |= this.authorize(accessLevel, $sessionStorage.user.groups[groupIdx]);
+              }
+            } else {
+              isAuthorized = accessLevel.bitMask & userRoles['public'].bitMask;
             }
           }
           else if (!!role) {
@@ -34,25 +39,25 @@ angular.module('services.auth', ['restangular'])
             $.param(credentials),
             undefined,
             undefined,
-            {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}).
-            then(function (token) {
-
+            {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+          ).then(function (token) {
               $http.defaults.headers.common.Authorization = 'Bearer ' + token;
               var jwtBody = JSON.parse(window.atob(token.split('.')[1]));
-              Restangular.one('profile', jwtBody.sub).get().then(function (user) {
-                user.isLoggedIn = true;
-                $sessionStorage.user = user;
-                $sessionStorage.token = token;
-                if (rememberMe) {
-                  $localStorage.user = user;
-                  $localStorage.token = token;
-                }
-                success(user);
-              }, function (response) {
-                error(response);
-              });
-            }, function (response) {
-              error(response);
+              Restangular.one('profile', jwtBody.sub).get()
+                .then(function (user) {
+                  user.isLoggedIn = true;
+                  $sessionStorage.user = user;
+                  $sessionStorage.token = token;
+                  if (rememberMe) {
+                    $localStorage.user = user;
+                    $localStorage.token = token;
+                  }
+                  success(user);
+                }, function (resp) {
+                  error(resp)
+                });
+            }, function (resp) {
+              error(resp)
             });
         },
         profile: function (email) {

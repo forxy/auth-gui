@@ -1,81 +1,82 @@
-<div>
-  <div class="alert alert-info" ng-show="tokensCount == 0">
-    No tokens found
-  </div>
+<error-handling namespace="tokens">
+  <div>
+    <div class="alert alert-info" ng-show="tokensCount == 0">
+      No tokens found
+    </div>
+    <div ng-show="tokensCount > 0">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th ng-repeat="header in headers">
+            <sort-by onsort="onSort" sortdir="filterCriteria.sort_dir" sortedby="filterCriteria.sorted_by"
+                     sortvalue="{{header.value}}">{{header.title}}
+            </sort-by>
+          </th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td></td>
+          <td>
+            <input class="form-control" style="width: 100px" on-enter-blur
+                   on-blur-change="filterResult()" ng-model="filterCriteria.token_key">
+          </td>
+          <td>
+            <input class="form-control" style="width: 80px" on-enter-blur
+                   on-blur-change="filterResult()" ng-model="filterCriteria.client_id">
+          </td>
+          <td>
+            <input class="form-control" style="width: 100px" on-enter-blur
+                   on-blur-change="filterResult()" ng-model="filterCriteria.type">
+          </td>
+          <td>
+            <input class="form-control" style="width: 100px" on-enter-blur
+                   on-blur-change="filterResult()" ng-model="filterCriteria.refresh_token">
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr ng-repeat="token in tokens">
+          <td>{{$index + 1}}</td>
+          <td><a ui-sref="config.tokens.details({tokenKey: token.token_key, mode : 'view'})">
+            {{token.tokenKey}}
+          </a></td>
+          <td>{{token.clientID}}</td>
+          <td>{{token.type}}</td>
+          <td>{{token.refreshToken}}</td>
+          <td>{{token.subject}}</td>
+          <td>{{token.expiresIn}}</td>
+          <td>{{token.issuedAt}}</td>
+          <td>
+            <div class="btn-group" style="width: 100px">
+              <a ui-sref="config.tokens.details({tokenKey: token.token_key, mode : 'edit'})"
+                 class="btn btn-default btn-sm">
+                <i class="fa fa-eye"></i>
+              </a>
 
-  <div ng-show="tokensCount > 0">
-    <table class="table table-striped">
-      <thead>
-      <tr>
-        <th>#</th>
-        <th ng-repeat="header in headers">
-          <sort-by onsort="onSort" sortdir="filterCriteria.sort_dir" sortedby="filterCriteria.sorted_by"
-                   sortvalue="{{header.value}}">{{header.title}}
-          </sort-by>
-        </th>
-        <th></th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td></td>
-        <td>
-          <input class="form-control" style="width: 100px" on-enter-blur
-                 on-blur-change="filterResult()" ng-model="filterCriteria.token_key">
-        </td>
-        <td>
-          <input class="form-control" style="width: 80px" on-enter-blur
-                 on-blur-change="filterResult()" ng-model="filterCriteria.client_id">
-        </td>
-        <td>
-          <input class="form-control" style="width: 100px" on-enter-blur
-                 on-blur-change="filterResult()" ng-model="filterCriteria.type">
-        </td>
-        <td>
-          <input class="form-control" style="width: 100px" on-enter-blur
-                 on-blur-change="filterResult()" ng-model="filterCriteria.refresh_token">
-        </td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr ng-repeat="token in tokens">
-        <td>{{$index + 1}}</td>
-        <td><a ui-sref="config.tokens.details({tokenKey: token.token_key, mode : 'view'})">
-          {{token.tokenKey}}
-        </a></td>
-        <td>{{token.clientID}}</td>
-        <td>{{token.type}}</td>
-        <td>{{token.refreshToken}}</td>
-        <td>{{token.subject}}</td>
-        <td>{{token.expiresIn}}</td>
-        <td>{{token.issuedAt}}</td>
-        <td>
-          <div class="btn-group" style="width: 100px">
-            <a ui-sref="config.tokens.details({tokenKey: token.token_key, mode : 'edit'})"
-               class="btn btn-default btn-sm">
-              <i class="fa fa-eye"></i>
-            </a>
-
-            <button type="button" class="btn btn-default btn-sm" ng-click="open('lg', token.token_key)">
-              <i class="fa fa-pencil"></i>
-            </button>
-            <!--<a href="#/tokens/{{token.email}}?mode=edit" class="btn btn-default btn-sm">
-              <i class="fa fa-pencil"></i>
-            </a>-->
-            <button type="button" class="btn btn-danger btn-sm" ng-click="token.remove()">
-              <i class="fa fa-trash-o"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-    <div ng-show="totalPages > 1">
-      <pagination num-pages="totalPages" ng-model="filterCriteria.page" current-page="filterCriteria.page"
-                  max-size="10" class="" boundary-links="true" on-select-page="selectPage(page)"></pagination>
+              <button type="button" class="btn btn-default btn-sm" ng-click="open('lg', token.token_key)">
+                <i class="fa fa-pencil"></i>
+              </button>
+              <!--<a href="#/tokens/{{token.email}}?mode=edit" class="btn btn-default btn-sm">
+                <i class="fa fa-pencil"></i>
+              </a>-->
+              <button type="button" class="btn btn-danger btn-sm" ng-click="token.remove()">
+                <i class="fa fa-trash-o"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <div ng-show="totalPages > 1">
+        <pagination num-pages="totalPages" ng-model="filterCriteria.page" current-page="filterCriteria.page"
+                    max-size="10" class="" boundary-links="true" on-select-page="selectPage(page)"></pagination>
+      </div>
     </div>
   </div>
-</div>
+</error-handling>

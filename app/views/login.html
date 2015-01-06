@@ -2,13 +2,13 @@
 
   <form id="login-form" ng-show="!$storage.user.isLoggedIn" name="loginForm" method="post"
         ng-submit="login(credentials)" role="form" class="login-form form-horizontal" form-autofill-fix>
-    <div class="row">
+    <div class="row" ng-if="!$storage.user.isLoggedIn">
 
       <div class="form-group">
         <div class="input-group">
           <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-          <input id="email" type="email" name="email" ng-model="credentials.email" class="form-control"
-                 placeholder="Email" required autofocus>
+          <input id="login" type="text" name="login" ng-model="credentials.login" class="form-control"
+                 placeholder="Login or Email" required autofocus>
         </div>
       </div>
 
@@ -30,18 +30,15 @@
         </div>
       </div>
       <div class="btn-group-lg">
-        <button type="submit" class="btn btn-default btn-block">Log in</button>
-      </div>
-      <div id="alerts-container">
-        <alert ng-repeat="alert in alerts" class="alert-pupup" type="{{alert.type}}" close="alerts.splice($index, 1)">{{alert.msg}}</alert>
+        <button type="submit" class="btn btn-default btn-block"
+                error-handling namespace="login" use-popover="true" placement="bottom">
+          Log in
+        </button>
       </div>
     </div>
-  </form>
-  <form ng-if="$storage.user.isLoggedIn" name="logoutForm" method="post" role="form"
-        ng-submit="logout()" class="form-horizontal">
-    <div class="form-group-lg">
+    <div ng-if="$storage.user.isLoggedIn" class="form-group-lg">
       <div class="btn-group-lg">
-        <button type="submit" class="btn btn-default btn-block">Log Out</button>
+        <button type="submit" class="btn btn-default btn-block" ng-click="logout()">Log Out</button>
       </div>
     </div>
   </form>

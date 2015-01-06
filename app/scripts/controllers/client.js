@@ -45,10 +45,14 @@ angular.module('controllers.client', [])
           $scope.clients = response.content;
           $scope.totalPages = Math.ceil(response.total / response.size);
           $scope.clientsCount = response.total;
-        }, function () {
+        }, function (resp) {
           $scope.clients = [];
           $scope.totalPages = 0;
           $scope.clientsCount = 0;
+          throw {
+            message: !!resp.data.error ? resp.data.error + ' : ' + resp.data.messages[0] : 'Error: ' + resp.status,
+            namespace: 'clients'
+          };
         });
       };
 

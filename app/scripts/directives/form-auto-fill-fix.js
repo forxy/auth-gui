@@ -3,7 +3,7 @@
 angular.module('directives.form-auto-fill-fix', [])
 
   .directive('formAutofillFix', function () {
-    return function (scope, elem, attrs) {
+    return function ($scope, elem, attrs) {
       // Fixes Chrome bug: https://groups.google.com/forum/#!topic/angular/6NlucSskQjY
       elem.prop('method', 'POST');
 
@@ -13,7 +13,7 @@ angular.module('directives.form-auto-fill-fix', [])
           elem.unbind('submit').submit(function (e) {
             e.preventDefault();
             elem.find('input, textarea, select').trigger('input').trigger('change').trigger('keydown');
-            scope.$apply(attrs.ngSubmit);
+            $scope.$apply(attrs.ngSubmit);
           });
         }, 0);
       }

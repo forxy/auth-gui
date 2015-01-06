@@ -17,6 +17,7 @@ angular.module('authServiceAdmin', [
   'directives.on-blur-change',
   'directives.on-enter-blur',
   'directives.sort-by',
+  'directives.error-handling',
   'services.common',
   'services.user',
   'services.client',
@@ -44,8 +45,7 @@ angular.module('authServiceAdmin', [
         scope: 'readClients writeClients readTokens updateTokens'
       });
 
-      RestangularProvider.setBaseUrl('/api/auth');
-      //RestangularProvider.setBaseUrl(config.authEndpoint);
+      RestangularProvider.setBaseUrl(config.apiEndpoint);
 
       var access = routingConfig.accessLevels;
 
@@ -86,7 +86,7 @@ angular.module('authServiceAdmin', [
           templateUrl: 'views/users/list.html',
           controller: 'UsersListCtrl',
           data: {
-            access: access.user
+            access: access.users_reader
           }
         })
         .state('config.users.details', {
@@ -94,7 +94,7 @@ angular.module('authServiceAdmin', [
           templateUrl: 'views/users/details.html',
           controller: 'UserDetailsCtrl',
           data: {
-            access: access.admin
+            access: access.users_manager
           }
         })
         .state('config.clients', {
@@ -102,7 +102,7 @@ angular.module('authServiceAdmin', [
           templateUrl: 'views/config.stump.html',
           controller: 'MainCtrl',
           data: {
-            access: access.user
+            access: access.public
           }
         })
         .state('config.clients.list', {
@@ -110,7 +110,7 @@ angular.module('authServiceAdmin', [
           templateUrl: 'views/clients/list.html',
           controller: 'ClientsListCtrl',
           data: {
-            access: access.user
+            access: access.public
           }
         })
         .state('config.clients.details', {
@@ -118,7 +118,7 @@ angular.module('authServiceAdmin', [
           templateUrl: 'views/clients/details.html',
           controller: 'ClientDetailsCtrl',
           data: {
-            access: access.admin
+            access: access.clients_manager
           }
         })
         .state('config.groups', {
@@ -126,7 +126,7 @@ angular.module('authServiceAdmin', [
           templateUrl: 'views/config.stump.html',
           controller: 'MainCtrl',
           data: {
-            access: access.user
+            access: access.public
           }
         })
         .state('config.groups.list', {
@@ -134,7 +134,7 @@ angular.module('authServiceAdmin', [
           templateUrl: 'views/groups/list.html',
           controller: 'GroupsListCtrl',
           data: {
-            access: access.user
+            access: access.public
           }
         })
         .state('config.groups.details', {
@@ -142,7 +142,7 @@ angular.module('authServiceAdmin', [
           templateUrl: 'views/groups/details.html',
           controller: 'GroupDetailsCtrl',
           data: {
-            access: access.admin
+            access: access.groups_manager
           }
         })
         .state('config.tokens', {
@@ -150,7 +150,7 @@ angular.module('authServiceAdmin', [
           templateUrl: 'views/config.stump.html',
           controller: 'MainCtrl',
           data: {
-            access: access.user
+            access: access.public
           }
         })
         .state('config.tokens.list', {
@@ -158,7 +158,7 @@ angular.module('authServiceAdmin', [
           templateUrl: 'views/tokens/list.html',
           controller: 'TokensListCtrl',
           data: {
-            access: access.user
+            access: access.tokens_reader
           }
         })
         .state('config.tokens.details', {
@@ -166,7 +166,7 @@ angular.module('authServiceAdmin', [
           templateUrl: 'views/tokens/details.html',
           controller: 'TokenDetailsCtrl',
           data: {
-            access: access.admin
+            access: access.tokens_manager
           }
         });
 
@@ -199,70 +199,76 @@ angular.module('authServiceAdmin', [
       });
 
       $locationProvider.html5Mode(true);
-
       $httpProvider.interceptors.push('OAuthInterceptor');
-      $httpProvider.interceptors.push(['$location', '$q', '$injector', function ($location, $q, $injector) {
-        function success(response) {
-          return response;
-        }
-
-        function error(response) {
-          if (response.status === 401 || response.status === 403) {
-            $injector.get('$state').transitionTo('login');
-            return $q.reject(response);
-          }
-          else {
-            return $q.reject(response);
-          }
-        }
-
-        return function (promise) {
-          return promise.then(success, error);
-        };
-      }]);
     }])
-  .run(['$rootScope', '$state', 'Auth', '$location', 'AlertMgr',
-    function ($rootScope, $state, Auth, $location, AlertMgr) {
+  .run(['$rootScope', '$state', 'Auth', '$location',
+    function ($rootScope, $state, Auth, $location) {
       $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
         if (!Auth.authorize(toState.data.access)) {
-          AlertMgr.addAlert('danger', 'Seems like you tried accessing a route you don`t have access to...');
 
           event.preventDefault();
 
           if (fromState.url === '^') {
             if (Auth.isLoggedIn()) {
-              $rootScope.alerts = [];
-              $state.go('clients.list');
+              $state.go('config.clients.list');
             } else {
-              $state.transitionTo('login', {redirect_url: $location.url()});
+              $state.transitionTo('login', {continue: $location.url()});
             }
           }
-        } else {
-          AlertMgr.clearAlerts();
+          throw {
+            message: 'Sorry, but you don\'t have enough permissions',
+            namespace: 'state'
+          };
         }
       });
     }])
-  /*.run(['$rootScope', '$window', 'OAuth',
-    function ($rootScope, $window, OAuth) {
-      //$rootScope.session = sessionService;
-      $window.app = {
-        authState: function (state, user) {
-          $rootScope.$apply(function () {
-            switch (state) {
-              case 'success':
-                OAuth.verifyAsync(user);
-                break;
-              case 'failure':
-                $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
-                break;
-            }
-
-          });
+  .run(['Restangular', '$location', '$injector',
+    function (Restangular, $location, $injector) {
+      Restangular.setErrorInterceptor(function (resp) {
+        if (!!resp.status && resp.status > 300) {
+          var $location = $injector.get('$location');
+          var $state = $injector.get('$state');
+          var message = null;
+          var namespace = 'http';
+          switch (resp.status) {
+            case 401:
+              message = !!resp.data.error ? resp.data.error + ' : ' + resp.data.messages[0] : 'Error: ' + resp.status;
+              break;
+            case 403:
+              message = 'Sorry, but you don\'t have enough permissions';
+              break;
+            case 500:
+              message = 'Internal server error. Please try again later.';
+              break;
+            default :
+              message = !!resp.data.error ? resp.data.error + ' : ' + resp.messages[0] : 'Error: ' + resp.status;
+              break;
+          }
+          $injector.invoke(['$rootScope', function ($rootScope) {
+            $rootScope.$broadcast(namespace, message);
+          }]);
         }
+        return resp; // stop the promise chain
+      });
+    }])
+  .run(['Restangular', '$injector',
+    function (Restangular, $injector) {
+      Restangular.setRequestInterceptor(function (element, operation, route, url) {
+        $injector.invoke(['$rootScope', function ($rootScope) {
+          $rootScope.$broadcast('error:clean');
+        }]);
+        return element;
+      });
+    }])
+  .config(['$provide', function ($provide) {
+    $provide.decorator('$exceptionHandler', ['$delegate', '$injector', function ($delegate, $injector) {
+      return function (exception, cause) {
+        if (!!exception.namespace) {
+          $injector.invoke(['$rootScope', function ($rootScope) {
+            $rootScope.$broadcast(exception.namespace, exception.message);
+          }]);
+        }
+        $delegate(exception, cause);
       };
-
-      if ($window.user !== null) {
-        alert('Authentication succeeded');
-        //sessionService.authSuccess($window.user);
-      }
-    }])*/;
+    }]);
+  }]);

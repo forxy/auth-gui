@@ -1,6 +1,8 @@
 'use strict';
 
 angular.module('services.config', [])
-    .constant('config', {
-        authEndpoint: '@@authEndpoint'
-    });
+
+  .constant('config', {
+    apiEndpoint: '/api/auth',
+    authEndpoint: '@@authEndpoint'
+  });

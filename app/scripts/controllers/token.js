@@ -49,10 +49,14 @@ angular.module('controllers.token', [])
           $scope.tokens = response.content;
           $scope.totalPages = Math.ceil(response.total / response.size);
           $scope.tokensCount = response.total;
-        }, function () {
+        }, function (resp) {
           $scope.tokens = [];
           $scope.totalPages = 0;
           $scope.tokensCount = 0;
+          throw {
+            message: !!resp.data.error ? resp.data.error + ' : ' + resp.data.messages[0] : 'Error: ' + resp.status,
+            namespace: 'tokens'
+          };
         });
       };
 
